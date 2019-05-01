@@ -226,56 +226,11 @@ void ldo_mode_set(int ldo_bypass)
 
 static void setup_iomux_uart(void)
 {
-/*	
-	iomux_v3_cfg_t const mx6q_uart1_pads[] = {
-		MX6Q_PAD_SD3_DAT6__UART1_RX_DATA
-			| MUX_PAD_CTRL(UART_PAD_CTRL),
-		MX6Q_PAD_SD3_DAT7__UART1_TX_DATA
-			| MUX_PAD_CTRL(UART_PAD_CTRL),
-	};
-
-
-	iomux_v3_cfg_t const mx6dl_uart1_pads[] = {
-		MX6DL_PAD_SD3_DAT6__UART1_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
-		MX6DL_PAD_SD3_DAT7__UART1_TX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL),
-	};
-*/
-//	imx_iomux_v3_setup_multiple_pads(mx6dl_uart1_pads, ARRAY_SIZE(mx6dl_uart1_pads));
-/*
-	__raw_writel(0x1,0x20E0324);
-	__raw_writel(0x1,0x20E0328);
-
-	__raw_writel(0x1B0B0,0x20E070C);
-	__raw_writel(0x1B0B0,0x20E0700);
-	
-	__raw_writel(0x4,0x20E0904);
-*/
         iomux_v3_cfg_t const uart2_pads[] = {
                 IOMUX_PADS(PAD_SD3_DAT4__UART2_RX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL)),
                 IOMUX_PADS(PAD_SD3_DAT5__UART2_TX_DATA | MUX_PAD_CTRL(UART_PAD_CTRL)),
         };
 	SETUP_IOMUX_PADS(uart2_pads);
-	
-	//	SETUP_MULTIPLE_PADS(mx6q_uart1_pads, mx6dl_uart1_pads);
-/*
-	iomux_v3_cfg_t const mx6q_uart2_pads[] = {
-		MX6Q_PAD_SD3_DAT4__UART2_RX_DATA
-			| MUX_PAD_CTRL(UART_PAD_CTRL),
-		MX6Q_PAD_SD3_DAT5__UART2_TX_DATA
-			| MUX_PAD_CTRL(UART_PAD_CTRL),
-	};
-
-	iomux_v3_cfg_t const mx6dl_uart2_pads[] = {
-		MX6DL_PAD_SD3_DAT4__UART2_RX_DATA
-			| MUX_PAD_CTRL(UART_PAD_CTRL),
-		MX6DL_PAD_SD3_DAT5__UART2_TX_DATA
-			| MUX_PAD_CTRL(UART_PAD_CTRL),
-	};
-
-	SETUP_MULTIPLE_PADS(mx6q_uart2_pads, mx6dl_uart2_pads);
-
-*/
-//	SETUP_IOMUX_PADS(uart1_pads);
 }
 
 #if defined(CONFIG_FSL_ESDHC)
@@ -285,7 +240,7 @@ static void setup_iomux_uart(void)
  *  mmc0              |  SD2
  *  mmc1              |  eMMC
  */
-#define CONFIG_SYS_FSL_USDHC_NUM 2
+#define CONFIG_SYS_FSL_USDHC_NUM 1
 struct fsl_esdhc_cfg usdhc_cfg[CONFIG_SYS_FSL_USDHC_NUM];
 
 int mmc_get_env_devno(void)
@@ -297,12 +252,15 @@ int mmc_get_env_devno(void)
 #define MMC2_WP_GPIO	IMX_GPIO_NR(6, 11)
 
 int board_mmc_getcd(struct mmc *mmc) {
+	printf("mmc_getcd start\n");
 	struct fsl_esdhc_cfg *cfg = (struct fsl_esdhc_cfg *)mmc->priv;
 	int ret = 0;
 
 	switch (cfg->esdhc_base) {
 		case USDHC2_BASE_ADDR:
 			ret = !gpio_get_value(MMC2_CD_GPIO);
+			printf("ret = %d\n",ret);
+			ret = 1;
 			break;
 		case USDHC4_BASE_ADDR:
 			ret = 1; /* eMMC always present */
@@ -313,48 +271,22 @@ int board_mmc_getcd(struct mmc *mmc) {
 
 static void init_mmc2(int idx) {
 
-	iomux_v3_cfg_t const mx6q_usdhc2_pads[] = {
-		MX6Q_PAD_SD2_CLK__SD2_CLK
-			| MUX_PAD_CTRL(SD_CLK_PAD_CTRL),
-		MX6Q_PAD_SD2_CMD__SD2_CMD
-			| MUX_PAD_CTRL(SD_PAD_CTRL),
-		MX6Q_PAD_SD2_DAT0__SD2_DATA0
-			| MUX_PAD_CTRL(SD_PAD_CTRL),
-		MX6Q_PAD_SD2_DAT1__SD2_DATA1
-			| MUX_PAD_CTRL(SD_PAD_CTRL),
-		MX6Q_PAD_SD2_DAT2__SD2_DATA2
-			| MUX_PAD_CTRL(SD_PAD_CTRL),
-		MX6Q_PAD_SD2_DAT3__SD2_DATA3
-			| MUX_PAD_CTRL(SD_PAD_CTRL),
-		MX6Q_PAD_GPIO_4__GPIO1_IO04
-			| MUX_PAD_CTRL(GPIO_DEFAULT_PAD_CTRL),	/* MMC2_CD_GPIO */
-		MX6Q_PAD_NANDF_CS0__GPIO6_IO11
-			| MUX_PAD_CTRL(GPIO_DEFAULT_PAD_CTRL),	/* MMC2_WP_GPIO */
-	};
-
 	iomux_v3_cfg_t const mx6dl_usdhc2_pads[] = {
-		MX6DL_PAD_SD2_CLK__SD2_CLK
-			| MUX_PAD_CTRL(SD_CLK_PAD_CTRL),
-		MX6DL_PAD_SD2_CMD__SD2_CMD
-			| MUX_PAD_CTRL(SD_PAD_CTRL),
-		MX6DL_PAD_SD2_DAT0__SD2_DATA0
-			| MUX_PAD_CTRL(SD_PAD_CTRL),
-		MX6DL_PAD_SD2_DAT1__SD2_DATA1
-			| MUX_PAD_CTRL(SD_PAD_CTRL),
-		MX6DL_PAD_SD2_DAT2__SD2_DATA2
-			| MUX_PAD_CTRL(SD_PAD_CTRL),
-		MX6DL_PAD_SD2_DAT3__SD2_DATA3
-			| MUX_PAD_CTRL(SD_PAD_CTRL),
-		MX6DL_PAD_GPIO_4__GPIO1_IO04
-			| MUX_PAD_CTRL(GPIO_DEFAULT_PAD_CTRL),	/* MMC2_CD_GPIO */
-		MX6DL_PAD_NANDF_CS0__GPIO6_IO11
-			| MUX_PAD_CTRL(GPIO_DEFAULT_PAD_CTRL),	/* MMC2_WP_GPIO */
+		IOMUX_PADS(PAD_SD2_CLK__SD2_CLK | MUX_PAD_CTRL(SD_CLK_PAD_CTRL)),
+		IOMUX_PADS(PAD_SD2_CMD__SD2_CMD | MUX_PAD_CTRL(SD_PAD_CTRL)),
+		IOMUX_PADS(PAD_SD2_DAT0__SD2_DATA0 | MUX_PAD_CTRL(SD_PAD_CTRL)),
+		IOMUX_PADS(PAD_SD2_DAT1__SD2_DATA1 | MUX_PAD_CTRL(SD_PAD_CTRL)),
+		IOMUX_PADS(PAD_SD2_DAT2__SD2_DATA2 | MUX_PAD_CTRL(SD_PAD_CTRL)),
+		IOMUX_PADS(PAD_SD2_DAT3__SD2_DATA3 | MUX_PAD_CTRL(SD_PAD_CTRL)),
+		IOMUX_PADS(PAD_GPIO_4__GPIO1_IO04 | MUX_PAD_CTRL(GPIO_DEFAULT_PAD_CTRL)),	/* MMC2_CD_GPIO */
+		IOMUX_PADS(PAD_NANDF_CS0__GPIO6_IO11 | MUX_PAD_CTRL(GPIO_DEFAULT_PAD_CTRL)),	/* MMC2_WP_GPIO */
 	};
 
-	SETUP_MULTIPLE_PADS(mx6q_usdhc2_pads, mx6dl_usdhc2_pads);
+	SETUP_IOMUX_PADS(mx6dl_usdhc2_pads);
 
 	usdhc_cfg[idx].esdhc_base = USDHC2_BASE_ADDR;
 	usdhc_cfg[idx].sdhc_clk = mxc_get_clock(MXC_ESDHC2_CLK);
+	usdhc_cfg[idx].max_bus_width = 4;
 }
 
 #if defined(CONFIG_SYS_USE_EMMC)
@@ -433,13 +365,27 @@ static void init_emmc(int idx) {}
 
 int board_mmc_init(bd_t *bis) {
 
+	        // Red LED pad to GPIO
+        u32 val;
+        __raw_writel(0x5,0x20E02E8);
+        // GPIO (1,17) to output
+        val = __raw_readl(0x209C004);
+        __raw_writel(val|0x30000,0x209C004);
+        // GPIO (1, 17) off (LED ON)
+        val = __raw_readl(0x209C000);
+        __raw_writel(val&(~(0x30000)),0x209C000);
+
+	printf("mmc_init\n");
 	int i;
 	for (i = 0; i < CONFIG_SYS_FSL_USDHC_NUM; i++) {
 		switch (i) {
 			case 0:
+				printf("init_mmc2\n");
 				init_mmc2(i);
+				gd->arch.sdhc_clk = usdhc_cfg[i].sdhc_clk;
 				break;
 			case 1:
+				printf("init_emmc\n");
 				init_emmc(i);
 				break;
 			default:
@@ -1290,7 +1236,6 @@ static void ccgr_init(void)
 	writel(0xFFFFFFFF, &ccm->CCGR4);
 	writel(0xFFFFFFFF, &ccm->CCGR5);
 	writel(0xFFFFFFFF, &ccm->CCGR6);
-	__raw_writel(0x0F000000,0x20C407C);
 }
 
 static void spl_dram_init(int width)
