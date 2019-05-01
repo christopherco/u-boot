@@ -35,7 +35,7 @@
 #define CONFIG_PHY_ATHEROS
 
 /* Framebuffer */
-#define CONFIG_VIDEO_IPUV3
+/*#define CONFIG_VIDEO_IPUV3
 #define CONFIG_VIDEO_BMP_RLE8
 #define CONFIG_SPLASH_SCREEN
 #define CONFIG_SPLASH_SCREEN_ALIGN
@@ -44,7 +44,7 @@
 #define CONFIG_VIDEO_BMP_LOGO
 #define CONFIG_IMX_HDMI
 #define CONFIG_IMX_VIDEO_SKIP
-
+*/
 /* USB */
 #define CONFIG_EHCI_HCD_INIT_AFTER_RESET
 #define CONFIG_MXC_USB_PORTSC		(PORT_PTS_UTMI | PORT_PTS_PTW)
@@ -70,8 +70,8 @@
 
 /* Command definition */
 
-#define CONFIG_MXC_UART_BASE	UART1_BASE
-#define CONSOLE_DEV	"ttymxc0"
+#define CONFIG_MXC_UART_BASE	UART2_BASE
+#define CONSOLE_DEV	"ttymxc1"
 #define CONFIG_SYS_MMC_ENV_DEV		0	/* SDHC2 */
 
 #ifndef CONFIG_SPL_BUILD
