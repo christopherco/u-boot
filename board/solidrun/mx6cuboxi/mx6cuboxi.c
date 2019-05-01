@@ -1199,6 +1199,20 @@ static const struct mx6_mmdc_calibration mx6dl_1g_mmcd_calib = {
 	.p1_mpwrdlctl =    0x36363430,
 };
 
+
+static struct mx6_ddr3_cfg mem_ddr_2g = {
+	.mem_speed = 1600,
+	.density   = 2,
+	.width     = 16,
+	.banks     = 8,
+	.rowaddr   = 15,
+	.coladdr   = 10,
+	.pagesz    = 2,
+	.trcd      = 1375,
+	.trcmin    = 4875,
+	.trasmin   = 3500,
+};
+/*
 static struct mx6_ddr3_cfg mem_ddr_2g = {
 	.mem_speed = 1600,
 	.density   = 2,
@@ -1211,6 +1225,7 @@ static struct mx6_ddr3_cfg mem_ddr_2g = {
 	.trcmin    = 4875,
 	.trasmin   = 3500,
 };
+*/
 
 static struct mx6_ddr3_cfg mem_ddr_4g = {
 	.mem_speed = 1600,
@@ -1260,19 +1275,19 @@ static void spl_dram_init(int width)
 		.refr = 7,	/* 8 refresh commands per refresh cycle */
 	};
 
-	if (is_mx6dq())
-		mx6dq_dram_iocfg(width, &mx6q_ddr_ioregs, &mx6q_grp_ioregs);
-	else
+//	if (is_mx6dq())
+//		mx6dq_dram_iocfg(width, &mx6q_ddr_ioregs, &mx6q_grp_ioregs);
+//	else
 		mx6sdl_dram_iocfg(width, &mx6dl_ddr_ioregs, &mx6sdl_grp_ioregs);
 
-	if (is_cpu_type(MXC_CPU_MX6D))
-		mx6_dram_cfg(&sysinfo, &mx6q_1g_mmcd_calib, &mem_ddr_2g);
-	else if (is_cpu_type(MXC_CPU_MX6Q))
-		mx6_dram_cfg(&sysinfo, &mx6q_2g_mmcd_calib, &mem_ddr_4g);
-	else if (is_cpu_type(MXC_CPU_MX6DL))
+//	if (is_cpu_type(MXC_CPU_MX6D))
+//		mx6_dram_cfg(&sysinfo, &mx6q_1g_mmcd_calib, &mem_ddr_2g);
+//	else if (is_cpu_type(MXC_CPU_MX6Q))
+//		mx6_dram_cfg(&sysinfo, &mx6q_2g_mmcd_calib, &mem_ddr_4g);
+//	else if (is_cpu_type(MXC_CPU_MX6DL))
 		mx6_dram_cfg(&sysinfo, &mx6dl_1g_mmcd_calib, &mem_ddr_2g);
-	else if (is_cpu_type(MXC_CPU_MX6SOLO))
-		mx6_dram_cfg(&sysinfo, &mx6dl_512m_mmcd_calib, &mem_ddr_2g);
+//	else if (is_cpu_type(MXC_CPU_MX6SOLO))
+//		mx6_dram_cfg(&sysinfo, &mx6dl_512m_mmcd_calib, &mem_ddr_2g);
 }
 
 #define TEST_GPIO	IMX_GPIO_NR(6, 18)
@@ -1313,10 +1328,10 @@ void board_init_f(ulong dummy)
 	preloader_console_init();	
 
 	/* DDR initialization */
-	if (is_cpu_type(MXC_CPU_MX6SOLO))
+	//if (is_cpu_type(MXC_CPU_MX6SOLO))
 		spl_dram_init(32);
-	else
-		spl_dram_init(64);
+//	else
+//		spl_dram_init(64);
 
 	/* Clear the BSS. */
 	memset(__bss_start, 0, __bss_end - __bss_start);
